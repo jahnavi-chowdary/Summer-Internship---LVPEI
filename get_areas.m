@@ -1,4 +1,4 @@
-function [state_of_light_right area_pupil_right] = samples_new(video_right)
+function [state_of_light_right area_pupil_right] = get_areas(video_right)
 
 numFrames_right = video_right.NumberOfFrames;
 n = numFrames_right;
