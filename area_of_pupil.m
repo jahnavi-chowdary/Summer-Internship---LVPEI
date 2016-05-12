@@ -1,4 +1,4 @@
-function [state_of_light_right area_pupil_right] = get_areas(video_right)
+function [area_pupil_right] = area_of_pupil(video_right)
 
 numFrames_right = video_right.NumberOfFrames;
 n = numFrames_right;
