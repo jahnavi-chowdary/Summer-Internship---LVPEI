@@ -45,8 +45,8 @@ for k = 1:len
     
     % Getting the Area of Right and Left Eyes Pupils
     
-    [area_pupil_right] = area_of_pupil_final_GitHub(video_right);
-    [area_pupil_left] = area_of_pupil_final_GitHub(video_left);
+    [area_pupil_right] = area_of_pupil(video_right);
+    [area_pupil_left] = area_of_pupil(video_left);
     
     %% Shifting the starting of time values to zero (So that all the videos have a common origin)
     % To do so subtracting the time values with the value of the first
