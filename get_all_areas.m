@@ -1,10 +1,11 @@
-% The folder 'Abnormal' should contain the folders - CSV, CSV_interp, Plots,
+% The folders 'Abnormal', 'Normal' should contain the folders - CSV, CSV_interp, Plots,
 % Plots_interp, Videos. 
 
+% For getting the CSVs of interpolated areas, change the paths 
 clc;
 clear all;
 
-dir_seg = dir('../Abnormal/CSV/*.csv');
+dir_seg = dir('../Normal/CSV/*.csv'); % Change 'Normal' to 'Abnormal'
 len = length(dir_seg);
 all_areas = [];
 
@@ -21,12 +22,11 @@ for i = 1 : len
         
         fname_right_txt = strcat(ID,'_',Attempt,'_','right','.csv');
         fname_left_txt = strcat(ID,'_',Attempt,'_','left','.csv');
-        l_file = fullfile('../Abnormal/CSV', fname_left_txt);
-        r_file = fullfile('../Abnormal/CSV', fname_right_txt);
+        
+        l_file = fullfile('../Normal/CSV', fname); % Change 'Normal' to 'Abnormal'
+        r_file = fullfile('../Normal/CSV', fname); % Change 'Normal' to 'Abnormal'
         l = csvread(l_file);
         r = csvread(r_file);
-        l = l(:,1);
-        r = r(:,1);
         
         m = max(length(l), length(r));
 %         Insert zeros if the the lengths are different
@@ -39,11 +39,11 @@ for i = 1 : len
         areas = [l r];
 %         Concatenate the areas
         all_areas = [all_areas; areas];
-
+                                                                                    
     else
         continue
     end
     
 end
 
-xlswrite('../Abnormal/All_area.csv',all_areas);
+xlswrite('../Normal/All_area_normal.csv',all_areas); % Change 'Normal' to 'Abnormal'
