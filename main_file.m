@@ -47,8 +47,8 @@ for k = 1:len
     [hour_left var1 min_left var2 sec_left] = textread(fullfile('../Normal/Videos', fname_left_txt), '%d %c %d %c %f'); % Getting the Hour,Minutes,Seconds separately for the Left Eye
     time_left = [hour_left,min_left,sec_left];
     
-    [area_pupil_right] = samples_new_j(video_right);
-    [area_pupil_left] = samples_new_j(video_left);
+    [area_pupil_right] = area_of_pupil(video_right);
+    [area_pupil_left] = area_of_pupil(video_left);
     
     [state_of_light_right] = light_detect_bb2(video_right);
     [state_of_light_left] = light_detect_bb2(video_left);
