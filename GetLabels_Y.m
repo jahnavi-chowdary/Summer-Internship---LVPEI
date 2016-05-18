@@ -37,22 +37,24 @@ for k = 1:len
             var = strcmp(All_IDs(p),ID);
             if var == 1
                 idx = p;
+                flag = 0;
             else
-                continue
+                flag = 1;
             end
         end
         
-        lbl = GroundTruth(idx);
-        if strcmp(lbl,'Missing')
+        if flag == 0
+            lbl = GroundTruth(idx);
+            if strcmp(lbl,'Right')
+                labels(i,:) = 2;
+                i = i+1;
+            end
+            if strcmp(lbl,'Left')
+                labels(i,:) = 3;
+                i = i+1;
+            end
+        else
             labels(i,:) = 1;
-            i = i+1;
-        end
-        if strcmp(lbl,'Right')
-            labels(i,:) = 2;
-            i = i+1;
-        end
-        if strcmp(lbl,'Left')
-            labels(i,:) = 3;
             i = i+1;
         end
     

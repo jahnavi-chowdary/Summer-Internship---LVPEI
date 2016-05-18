@@ -7,9 +7,6 @@ function LogisticRegression(trainset_size,testset_size,accuracies,data_split,CM)
 % It also saves all the 'thetas' in a csv named 'LogR_Theta.csv' in the
 % current folder.
 
-clear;
-close all;
-
 all_X = csvread('./Final_XY_Vectors/FeatureVector_X.csv');
 all_Y = csvread('./Final_XY_Vectors/Labels_Y.csv');
 

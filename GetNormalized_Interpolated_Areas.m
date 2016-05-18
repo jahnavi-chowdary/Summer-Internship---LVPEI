@@ -7,7 +7,7 @@ function GetNormalized_Interpolated_Areas(save_all_csv,view_all_plots,save_all_p
 % 3. Saves all these plots in a folder named ScatterPlots_FInal if save_all_plots == 1.
 % It then computes the feature vector which is nothing but a concatenation of the left and right areas.
 % It saves the labels in a csv format in a folder named Final_XY_Vectors
-
+feature_vector = [];
 if save_all_csv == 1
     mkdir ('./','CSV_Final');
 end
@@ -18,36 +18,101 @@ end
 
 mkdir ('./','Final_XY_Vectors'); % To store the final feature vectors and labels in a specified place.
 
-dir_seg = dir('./Videos/*.avi'); 
+% load('All_Areas_SOL_Times.mat')
+
+dir_seg = dir('./CSV/*.csv'); % Change 'Normal' to 'Abnormal'
 len = length(dir_seg);
+all_areas = [];
 
-load('All_Areas_SOL_Times.mat')
+for i = 1 : len
+    
+    clear area_state_time;
+    fname = dir_seg(i).name;
+    [ID rem1] = strtok(fname,'_');
+    [Attempt rem2] = strtok(rem1,'_');
+    [temp rem3] = strtok(rem2,'_');
+    [Side rem4] = strtok(temp,'.');
+    
+    if strcmp(Side,'right')
+        
+        fname_right_txt = strcat(ID,'_',Attempt,'_','right','.csv');
+        fname_left_txt = strcat(ID,'_',Attempt,'_','left','.csv');
+  
+        l = csvread(fullfile('./CSV', fname_right_txt));
+        r = csvread(fullfile('./CSV', fname_left_txt));
+        
+        m = max(length(l), length(r));
+        
+        %         Insert zeros if the the lengths are different
+        if length(l) ~= m
+            l(length(l)+1:m) = 0;
+        elseif length(r) ~= m
+            r(length(r)+1:m) = 0;
+        end
+        
+         areas = [l r];
+%         Concatenate the areas
+        all_areas = [all_areas; areas];
+                                                                                    
+    else
+        continue
+    end
+    
+end
 
-l_min = min(min(all_areas(:,1)));
-r_min = min(min(all_areas(:,2)));
+mkdir ('./','CSV_Final')
 
-l_max = max(max(all_areas(:,1)));
-r_max = max(max(all_areas(:,2)));
+l_min = min(all_areas(:,1));
+r_min = min(all_areas(:,2));
 
-for i = 1 : size(all_areas,1)
+l_max = max(all_areas(:,1));
+r_max = max(all_areas(:,2));
+
+
+k = 1;
+for i = 1 : len
+    
+    clear area_state_time;
+    fname = dir_seg(i).name;
+    [ID rem1] = strtok(fname,'_');
+    [Attempt rem2] = strtok(rem1,'_');
+    [temp rem3] = strtok(rem2,'_');
+    [Side rem4] = strtok(temp,'.');
+    
+    if strcmp(Side,'right')
+        
+        fname_right_txt = strcat(ID,'_',Attempt,'_','right','.csv');
+        fname_left_txt = strcat(ID,'_',Attempt,'_','left','.csv');
+        l = csvread(fullfile('./CSV', fname_left_txt));
+        r = csvread(fullfile('./CSV', fname_right_txt));
+        
         
         % Min-max normalization of the areas
         
-        l_norm_area = ((all_areas(i,1:450) - l_min) / (l_max - l_min))';
-        r_norm_area = ((all_areas(i,451:900) - l_min) / (l_max - l_min))';
-        
-        l_time = (all_times(i,1:450))';
-        r_time = (all_times(i,451:900))';
+        l_area = (l(:,1) - l_min) / (l_max - l_min);
+        r_area = (r(:,1) - r_min) / (l_max - l_min);
+        l_time = l(:,2);
+        r_time = r(:,2);
          
-        xq = 0:57:(57*449);
-        xqr = 0:57:(57*449);
+        xq = 0:57:max(l_time);
+        xqr = 0:57:max(r_time);
+        m = max(length(xq), length(xqr));
+        
+        % If the lengths don't match, insert zeros
+        
+        if length(xq) ~= m
+            xq(length(xq)+1:m) = 0;
+        elseif length(xqr) ~= m
+            xqr(length(xqr)+1:m) = 0;
+        end
         
         % Interpolation
         
-        vq2l = interp1(l_time,l_norm_area,xq,'spline');
-        vq2r = interp1(r_time,r_norm_area,xqr,'spline');
+        vq2l = interp1(l_time,l_area,xq,'spline');
+        vq2r = interp1(r_time,r_area,xqr,'spline');
         
-        feature_vector(i,:) = [vq2l vq2r];
+        feature_vector(k,:) = [vq2l(1,1:450) vq2r(1,1:450)];
+        k = k+1;
         
 
         if save_all_csv == 1
