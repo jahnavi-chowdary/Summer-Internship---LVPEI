@@ -19,11 +19,6 @@ for k = 1:len
     [temp rem3] = strtok(rem2,'_');
     [Side rem4] = strtok(temp,'.');
     
-    % If the Video is a Right Eye Video -> Do the processing, i.e get the areas of both the Right Eye and Left eye of that particular user and 
-    % plot both the areas across time.
-    
-    % It the Video is a Left Eye Video -> Ignore (because the Left Eye videos are automatically processed along with the Right Eye videos and 
-    % we do not want it to be processed twice.)
         
     fname_right = strcat(ID,'_',Attempt,'.csv');
 
