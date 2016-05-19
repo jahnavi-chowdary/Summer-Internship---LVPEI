@@ -21,7 +21,7 @@ end
 
 i = 1;
 
-for k = 1:4
+for k = 1:len
     
     clear area_pupil_right;
     clear area_pupil_left;
@@ -127,7 +127,7 @@ for k = 1:4
 
      end
     %% Plotting the Area of Right and Left Vs Time in ms
-    if strcmp(view_all_plots , 'true')
+    if view_all_plots == 1
 
         % figure;
         % Right Eye Area Vs Time
@@ -152,7 +152,7 @@ for k = 1:4
         
         
         %% Saving the plot as an image in the folder named 'Plots'
-        if strcmp(save_all_plots , 'true')
+        if save_all_plots == 1
             % Write a parameter - True/False for wanting to save the Plots. (Note: Above parameter to view the plots also needs to be enabled)
 
             F = getframe(gcf);
@@ -193,8 +193,8 @@ GetLabels_Y;
 % for both the training and testing data.
 % accuracies,data_split,CM are parameters and if equal to 1 they display the accuracies,data_split,confusion matrix 
 %of train and test data 
-trainset_size = 1;
-testset_size = 1;
+trainset_size = 35;
+testset_size = 34;
 accuracies = 1;
 data_split = 1;
 CM = 1;

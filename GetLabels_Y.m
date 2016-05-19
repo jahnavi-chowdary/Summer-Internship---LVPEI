@@ -34,10 +34,12 @@ for k = 1:len
     if strcmp(Side,'right')
         clear var;
         for p = 1:len_ids
+            clear flag;
             var = strcmp(All_IDs(p),ID);
             if var == 1
                 idx = p;
                 flag = 0;
+                break;
             else
                 flag = 1;
             end

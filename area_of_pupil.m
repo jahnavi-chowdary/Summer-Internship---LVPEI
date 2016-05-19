@@ -24,13 +24,17 @@ function [area_pupil_right] = area_of_pupil(video_right)
     
             [hei wid] = size(I_1);
             clear I_new;
-            I_new = imcomplement(im2bw(I_1,0.275));
+            I_new = zeros(size(I_1));
+            I_new(I_1<70) = 1;
+            % I_new = imcomplement(im2bw(I_1,0.275));
             I_2(cl:min(hei_I,(cl+2*winSize2)),rl:min(wid_I,(rl+2*winSize1))) = I_new;
             I_new = I_2;
         else
             I_2 = I;
             [hei wid] = size(I);
-            I_new = imcomplement(im2bw(I_2,0.275));
+            I_new = zeros(size(I_2));
+            I_new(I_2<70) = 1;
+            % I_new = imcomplement(im2bw(I_2,0.275));
         end
         
     

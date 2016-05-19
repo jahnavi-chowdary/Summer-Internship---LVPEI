@@ -12,7 +12,9 @@ for i = 1:1:n
     [hei1 wid1] = size(I);
     I_2 = zeros(size(I));
     [hei wid] = size(I);
-    I_new1 = imcomplement(im2bw(I,0.8235));
+    I_new1 = zeros(size(I));
+    I_new1(I>210) = 1;
+    % I_new1 = imcomplement(im2bw(I,0.8235));
     
     SE1 = strel('disk', 2);
     I_ne1 = imcomplement(I_new1);
@@ -36,14 +38,18 @@ for i = 1:1:n
         clear I_new;
         
 %         Thresholding inside the window
-        I_new = imcomplement(im2bw(I_1,0.275));
+        I_new = zeros(size(I_1));
+        I_new(I_1 < 70) = 1;
+        % I_new = imcomplement(im2bw(I_1,0.275));
         I_2(cl:min((cl+2*winSize2),hei1),rl:min((rl+2*winSize1),wid1)) = I_new;
         I_new = I_2;
     
     else
         I_2 = I;
         [hei wid] = size(I);
-        I_new = imcomplement(im2bw(I_2,0.275));
+        I_new = zeros(size(I_2));
+        I_new(I_2 < 70) = 1;
+        % I_new = imcomplement(im2bw(I_2,0.275));
     end
     
     SE = strel('disk', 2);
