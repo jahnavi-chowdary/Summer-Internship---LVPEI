@@ -20,26 +20,33 @@ mkdir ('./','Final_XY_Vectors'); % To store the final feature vectors and labels
 
 % load('All_Areas_SOL_Times.mat')
 
-dir_seg = dir('./CSV/*.csv'); % Change 'Normal' to 'Abnormal'
-len = length(dir_seg);
+% dir_seg = dir('./CSV/*.csv'); % Change 'Normal' to 'Abnormal'
+% len = length(dir_seg);
+
+len = size(csvread('./Area_SOL_Time_CSV/RawAreas_Right.csv'),1);
+sizes_right = csvread('./Area_SOL_Time_CSV/Size_Right.csv');
+sizes_left = csvread('./Area_SOL_Time_CSV/Size_Left.csv');
 all_areas = [];
 
 for i = 1 : len
     
-    clear area_state_time;
-    fname = dir_seg(i).name;
-    [ID rem1] = strtok(fname,'_');
-    [Attempt rem2] = strtok(rem1,'_');
-    [temp rem3] = strtok(rem2,'_');
-    [Side rem4] = strtok(temp,'.');
-    
-    if strcmp(Side,'right')
-        
-        fname_right_txt = strcat(ID,'_',Attempt,'_','right','.csv');
-        fname_left_txt = strcat(ID,'_',Attempt,'_','left','.csv');
+%     clear area_state_time;
+%     fname = dir_seg(i).name;
+%     [ID rem1] = strtok(fname,'_');
+%     [Attempt rem2] = strtok(rem1,'_');
+%     [temp rem3] = strtok(rem2,'_');
+%     [Side rem4] = strtok(temp,'.');
+%     
+%     if strcmp(Side,'right')
+%         
+%         fname_right_txt = strcat(ID,'_',Attempt,'_','right','.csv');
+%         fname_left_txt = strcat(ID,'_',Attempt,'_','left','.csv');
+
+        l = csvread('./Area_SOL_Time_CSV/RawAreas_Left.csv',i-1,0,[i-1 0 i-1 (sizes_left(i,1)-1)]);
+        r = csvread('./Area_SOL_Time_CSV/RawAreas_Right.csv',i-1,0,[i-1 0 i-1 (sizes_right(i,1)-1)]);
   
-        l = csvread(fullfile('./CSV', fname_right_txt));
-        r = csvread(fullfile('./CSV', fname_left_txt));
+        % l = csvread(fullfile('./CSV', fname_right_txt));
+        % r = csvread(fullfile('./CSV', fname_left_txt));
         
         m = max(length(l), length(r));
         
@@ -51,70 +58,83 @@ for i = 1 : len
         end
         
          areas = [l r];
+            
+           % area = csvread('RawAreas.csv',i-1,0,[i-1 0 i-1 (sizes(i,1)-1)]); 
+
 %         Concatenate the areas
-        all_areas = [all_areas; areas];
+        all_areas = [all_areas; areas'];
                                                                                     
-    else
-        continue
-    end
+    % else
+      %  continue
+    % end
     
 end
 
-mkdir ('./','CSV_Final')
+% mkdir ('./','CSV_Final')
 
-l_min = min(all_areas(:,1));
-r_min = min(all_areas(:,2));
+all_min = min(all_areas);
+all_max = max(all_areas);
 
-l_max = max(all_areas(:,1));
-r_max = max(all_areas(:,2));
+% l_min = min(all_areas(:,1));
+% r_min = min(all_areas(:,2));
+% 
+% l_max = max(all_areas(:,1));
+% r_max = max(all_areas(:,2));
 
 
 k = 1;
 for i = 1 : len
     
-    clear area_state_time;
-    fname = dir_seg(i).name;
-    [ID rem1] = strtok(fname,'_');
-    [Attempt rem2] = strtok(rem1,'_');
-    [temp rem3] = strtok(rem2,'_');
-    [Side rem4] = strtok(temp,'.');
-    
-    if strcmp(Side,'right')
+%     clear area_state_time;
+%     fname = dir_seg(i).name;
+%     [ID rem1] = strtok(fname,'_');
+%     [Attempt rem2] = strtok(rem1,'_');
+%     [temp rem3] = strtok(rem2,'_');
+%     [Side rem4] = strtok(temp,'.');
+%     
+%     if strcmp(Side,'right')
+%         
+%         fname_right_txt = strcat(ID,'_',Attempt,'_','right','.csv');
+%         fname_left_txt = strcat(ID,'_',Attempt,'_','left','.csv');
+
+        l = csvread('./Area_SOL_Time_CSV/RawAreas_Left.csv',i-1,0,[i-1 0 i-1 (sizes_left(i,1)-1)]);
+        r = csvread('./Area_SOL_Time_CSV/RawAreas_Right.csv',i-1,0,[i-1 0 i-1 (sizes_right(i,1)-1)]);
         
-        fname_right_txt = strcat(ID,'_',Attempt,'_','right','.csv');
-        fname_left_txt = strcat(ID,'_',Attempt,'_','left','.csv');
-        l = csvread(fullfile('./CSV', fname_left_txt));
-        r = csvread(fullfile('./CSV', fname_right_txt));
+        % l = csvread(fullfile('./CSV', fname_left_txt));
+        % r = csvread(fullfile('./CSV', fname_right_txt));
         
         
         % Min-max normalization of the areas
         
-        l_area = (l(:,1) - l_min) / (l_max - l_min);
-        r_area = (r(:,1) - r_min) / (l_max - l_min);
-        l_time = l(:,2);
-        r_time = r(:,2);
+        l_area = (l - all_min) / (all_max - all_min);
+        r_area = (r - all_min) / (all_max - all_min);
+        
+        l_time = csvread('./Area_SOL_Time_CSV/Times_Left.csv',i-1,0,[i-1 0 i-1 (sizes_left(i,1)-1)]);
+        r_time = csvread('./Area_SOL_Time_CSV/Times_Right.csv',i-1,0,[i-1 0 i-1 (sizes_right(i,1)-1)]);;
          
-        xq = 0:57:max(l_time);
+        xql = 0:57:max(l_time);
         xqr = 0:57:max(r_time);
-        m = max(length(xq), length(xqr));
+        m = max(length(xql), length(xqr));
         
         % If the lengths don't match, insert zeros
         
-        if length(xq) ~= m
-            xq(length(xq)+1:m) = 0;
+        if length(xql) ~= m
+            xql(length(xql)+1:m) = 0;
         elseif length(xqr) ~= m
             xqr(length(xqr)+1:m) = 0;
         end
         
         % Interpolation
         
-        vq2l = interp1(l_time,l_area,xq,'spline');
-        vq2r = interp1(r_time,r_area,xqr,'spline');
+        vq2l = interp1(l_time',l_area',xql,'spline');
+        vq2r = interp1(r_time',r_area',xqr,'spline');
         
-        feature_vector(k,:) = [vq2l(1,1:450) vq2r(1,1:450)];
-        k = k+1;
-        
+        feature_vector = [vq2l(1,1:450) vq2r(1,1:450)];
+        dlmwrite('./Final_XY_Vectors/FeatureVector_X.csv',feature_vector,'-append');
+        clear feature_vector;
 
+        % k = k+1;
+            
         if save_all_csv == 1
 
             % Write a parameter - True/False whether to save the CSV in format
@@ -178,5 +198,4 @@ for i = 1 : len
             end
         end
     end
-dlmwrite('./Final_XY_Vectors/FeatureVector_X.csv',feature_vector);
 end
