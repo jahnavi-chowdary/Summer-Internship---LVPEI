@@ -1,36 +1,12 @@
-% clc;
-% clear;
-% close all;
-% 
-% dir_seg = dir('./Videos/*.avi');
-% len = length(dir_seg);
-% tic;
-% 
-% % Change save_all_csv to 1 if you want to save the csv's and similarly for
-% % the other 2 parameters.
-% save_all_csv = 0;
-% view_all_plots = 0;
-% save_all_plots = 0;
-% 
-% mkdir ('./','Area_SOL_Time_CSV');
-% 
-% if save_all_csv == 1
-%     mkdir ('./','CSV');
-% end
-% if save_all_plots == 1
-%     mkdir ('./','Plots');
-% end
-% 
-% i = 1;
-% 
-% for k = 1:4
-%     
-%     clear area_pupil_right;
-%     clear area_pupil_left;
-%     clear area_state_right;
-%     clear area_state_left;
-
 function main_file(fname)
+    % Computes the area for L and R eye
+    % Given 'fname' which is the string for the base file name of the
+    % videos and timestamps
+    % The videos need to be saved already
+    % The new vector of raw areas (non-temporally and non-amplitude normalized) extracted from the pair of videos specified by
+    % 'fname'_X.avi would be appended to all the existing CSV files storing
+    % different types of metadata, stored in the folder
+    % '\Area_SOL_Time_CSV'
 
     save_all_csv = 0;
     view_all_plots = 0;

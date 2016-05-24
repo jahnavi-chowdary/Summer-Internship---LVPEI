@@ -66,4 +66,4 @@ another_button = uicontrol(f,'Style','pushbutton','String','NEW PATIENT', 'Posit
 %% get inputs from the examiner
 h = rapdi_gui;
 
-main_file(v_right.Filename)
+% main_file(v_right.Filename);
