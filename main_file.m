@@ -172,10 +172,6 @@ function main_file(fname)
             imwrite(plot_area,fullfile('./Plots',fname_plot));
         end
     end
-    %else
-     %   continue
-    %end
-end
 
 %% Getting the normalized interpolated areas for all the videos
 % This function reads the areas from the csv files contained in the folder
@@ -216,5 +212,4 @@ CM = 1;
 
 LogisticRegression(trainset_size,testset_size,accuracies,data_split,CM);
 
-toc;
-
+end

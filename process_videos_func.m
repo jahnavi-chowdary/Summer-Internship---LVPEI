@@ -5,6 +5,7 @@ function process_videos_func(obj, event, himage, videoObj)
     % do all your real-time processing here in this function
     global record;
     global arduino;
+    global v_right; % This variable is passed to the main_file function TODO: Pass mr_no instead
     
     threshold_dark = 0.8;
     threshold_bright = 0.87;
@@ -24,11 +25,14 @@ function process_videos_func(obj, event, himage, videoObj)
         % fprintf(arduino, 's');
         open(videoObj);
         writeVideo(videoObj, im);      %% THIS IS GOING TO GIVE STRANGE OUTPUT
-    else
+    elseif (record == 0)
         % send OFF command to arduino
         % terminate videoObj
         close(videoObj);
-        % calculate FPS using timestamps and save the video
+        
+        % Now that the videos are saved, along with timestamps, we will
+        % process using ML
+        % main_file(v_right.Filename);
     end
 
     % you actively need to display the image in this function

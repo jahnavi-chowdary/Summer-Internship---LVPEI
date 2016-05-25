@@ -9,8 +9,9 @@ global v_left;      % The videoWriter objects, which change each time the patien
 global v_right;
 global h1;
 global h2;
+global attempt;
 
-record = 0;     % false
+record = 2;     % A neutral value that it only takes at the start
 
 %% Establish connection to the arduino
 ports = instrhwinfo('serial');
@@ -65,5 +66,3 @@ another_button = uicontrol(f,'Style','pushbutton','String','NEW PATIENT', 'Posit
 
 %% get inputs from the examiner
 h = rapdi_gui;
-
-% main_file(v_right.Filename);

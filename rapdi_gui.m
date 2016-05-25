@@ -78,6 +78,8 @@ global v_left;
 global v_right;
 global h1;
 global h2;
+global attempt;
+
 % hObject    handle to pushbutton1 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -118,11 +120,26 @@ if (exist(strcat(date, '.xls'), 'file'))
 end
 if (existing_worksheet_data == 0)  % i.e. no rows are filled
     disp('empty')
-    xlswrite(strcat(date, '.xls'), [{'First Name'} {'Last Name'} {'Age'} {'Gender'} {'Notes'} {'MR Number'} {'OS'} {'OD'}], 'Sheet1', 'A1');
+    xlswrite(strcat(date, '.xls'), [{'First Name'} {'Last Name'} {'Attempt'} {'Age'} {'Gender'} {'Notes'} {'MR Number'} {'OS'} {'OD'}], 'Sheet1', 'A1');
     existing_worksheet_data = existing_worksheet_data + 1;    % so that the next thing written will be after the present row
 end
+
+attempt = 0;
+[num,txt,raw] = xlsread(strcat(date, '.xls'));
+
+p = raw(:,7); 
+
+All_IDs = p(2:size(p,1),1);
+
+for i = 1:length(All_IDs)
+    var = strcmp(All_IDs(i),mr_no);
+    if var == 1
+        attempt = attempt+1;
+    end
+end
+
 % write the excel file with the user's data
-patient_data = [{first_name} {last_name} {age} gender(1) {rapd_notes} mr_no os od];
+patient_data = [{first_name} {last_name} attempt {age} gender(1) {rapd_notes} mr_no os od];
 strcat('A', num2str(existing_worksheet_data + 1))
 xlswrite(strcat(date, '.xls'), patient_data, 'Sheet1', strcat('A', num2str(existing_worksheet_data) + 1));
 
@@ -132,7 +149,7 @@ xlswrite(strcat(date, '.xls'), patient_data, 'Sheet1', strcat('A', num2str(exist
 
 if strcmp(os,'OS: Normal')
         if ~strcmp(od,'OD: Normal')
-            GroundTruth = 2; % Right Diseased
+            GroundTruth = 2 % Right Diseased
             p = od;
             % Grade(1,2) = str2num(p(1,size(p,2)));
             % Grade(1,1) = 0;
@@ -145,7 +162,7 @@ if strcmp(os,'OS: Normal')
     end
     if strcmp(od,'OD: Normal')
         if ~strcmp(os,'OS: Normal')
-            GroundTruth = 3; % Left Diseased
+            GroundTruth = 3 % Left Diseased
             p = os;
             % Grade(1,1) = str2num(p(1,size(p,2)));
             % Grade(1,2) = 0;
@@ -159,13 +176,13 @@ dlmwrite('./Final_XY_Vectors/Labels_Y.csv',GroundTruth,'-append');
 % -------------------------------------------------------------------------
 
 %% Create the video object
-video_filename = strcat(mr_no, '_left.avi');
+video_filename = strcat(mr_no,'_',num2str(attempt),'_left.avi');
 close(v_left);
 v_left = VideoWriter(video_filename);
 v_left.FrameRate = 30;
 v_left.Quality = 100;
 
-video_filename = strcat(mr_no, '_right.avi');
+video_filename = strcat(mr_no,'_',num2str(attempt) ,'_right.avi');
 close(v_right);
 v_right = VideoWriter(video_filename);
 v_right.FrameRate = 30;
