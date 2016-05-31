@@ -15,21 +15,21 @@ function process_videos_func_left(obj, event, himage, videoObj)
     [min_left, temp2] = strtok(temp1,':');
     [sec_left] = strtok(temp2,':');
     
-    time_lft = ((3600 .* hour_left) + (60 .* min_left) + sec_left) * 1000; 
+    time_lft = ((3600 .* hour_left) + (60 .* min_left) + sec_left) * 1000;
 
     % you get the image in this function from:
     im = event.Data;
+    imshow(im);
     % im_processed = process_pupil(im, 1, 180,threshold_dark, threshold_bright);
     
     if (record == 1 && stop == 0)
         % send ON command to arduino
         % create video object and start recording
-
+        open(videoObj);
         area_of_pupil_left(im);
         time_left = [time_left , time_lft];
-    end
           
-    if (record == 0 && stop == 1)
+    elseif (record == 0 && stop == 1)
         % send OFF command to arduino
         % terminate videoObj
         
@@ -47,10 +47,17 @@ function process_videos_func_left(obj, event, himage, videoObj)
         
         clear area_pupil_left;
         clear time_left;
+        
+        close(videoObj);
                 
         % Now that the videos are saved, along with timestamps, we will
         % process using ML
         % main_file(v_right.Filename);
+        
+    else
+        display('There is a conflict between record and stop');
+        record
+        stop
     end
 
     % you actively need to display the image in this function

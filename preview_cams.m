@@ -4,6 +4,7 @@ clear all;
 % Also save the live video stream at the end
 % If this is possible, then the whole thing should happen this way
 global record;
+global stop;
 global arduino;
 global v_left;      % The videoWriter objects, which change each time the patient info is changed
 global v_right;
@@ -12,6 +13,7 @@ global h2;
 global attempt;
 
 record = 2;     % A neutral value that it only takes at the start
+stop = 2;
 
 %% Establish connection to the arduino
 ports = instrhwinfo('serial');

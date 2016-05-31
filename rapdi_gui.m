@@ -143,7 +143,7 @@ p = raw(:,7);
 All_IDs = p(2:size(p,1),1);
 
 for i = 1:length(All_IDs)
-    var = strcmp(All_IDs(i),mr_no);
+    var = strcmp(num2str(All_IDs{i}),mr_no);
     if var == 1
         attempt = attempt+1;
     end
@@ -152,7 +152,7 @@ end
 % write the excel file with the user's data
 patient_data = [{first_name} {last_name} attempt {age} gender(1) {rapd_notes} mr_no os od];
 strcat('A', num2str(existing_worksheet_data + 1))
-xlswrite(strcat(date, '.xls'), patient_data, 'Sheet1', strcat('A', num2str(existing_worksheet_data) + 1));
+xlswrite(strcat(date, '.xls'), patient_data, 'Sheet1', strcat('A', num2str(existing_worksheet_data + 1)));
 
 % -------------------------------------------------------------------------
 
@@ -201,14 +201,14 @@ v_right.Quality = 100;
 
 waitfor(msgbox('Please align the Pupils correctly and then click on the centre of both the pupils.'));
 [x,y] = ginput(2);
-assignin('base','x_cord',x);
-assignin('base','y_cord',y);
+assignin('base','x_cord',x)
+assignin('base','y_cord',y)
 
-x_left = y_cord(1,1);
-x_right = y_cord(2,1);
+x_left = y(1,1);
+x_right = y(2,1);
 
-y_left = x_cord(1,1);
-y_right = x_cord(2,1);
+y_left = x(1,1);
+y_right = x(2,1);
 
 area_pupil_right = [];
 area_pupil_left = [];
