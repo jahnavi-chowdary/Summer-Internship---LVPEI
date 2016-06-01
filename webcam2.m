@@ -101,5 +101,4 @@ set(vidObj1, 'FramesPerTrigger', 1);
 % Configure vidObj1's video source properties.
 srcObj1 = get(vidObj1, 'Source');
 
-
 out = vidObj1 ;

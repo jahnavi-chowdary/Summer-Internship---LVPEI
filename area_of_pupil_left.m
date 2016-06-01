@@ -1,8 +1,20 @@
-function area_of_pupil_left(I)
-   
+function area_of_pupil_left(event)
+    
+    % display('Area_LEFT');
     global x_left;
     global y_left;
     global area_pupil_left;
+    global time_left;
+    
+    I = event.Data;
+    tstampstr = event.Timestamp;
+    
+    [hour_left, temp1] = strtok(tstampstr,':');
+    [min_left, temp2] = strtok(temp1,':');
+    [sec_left] = strtok(temp2,':');
+    
+    time_lft = ((3600 .* str2num(hour_left)) + (60 .* str2num(min_left)) + str2num(sec_left)) * 1000;
+    time_left = [time_left , time_lft];
         
     % Getting area of Pupil
     I = rgb2gray(I);
@@ -40,10 +52,10 @@ function area_of_pupil_left(I)
     D1 = Ir;
     [Ilabel, num] = bwlabel(D1);
 
-    for cnt = 1:num
+    % for cnt = 1:num
         s = regionprops(Ilabel, 'BoundingBox', 'Area', 'Centroid','MajorAxisLength','MinorAxisLength');
-        rectangle('position', s(cnt).BoundingBox,'EdgeColor','r','linewidth',2);
-    end
+        % rectangle('position', s(cnt).BoundingBox,'EdgeColor','r','linewidth',2);
+    % end
     diameters = mean([s.MajorAxisLength s.MinorAxisLength],2);
     centers = s.Centroid;
 
@@ -56,6 +68,3 @@ function area_of_pupil_left(I)
         radii_right = diameters/2;
         area_pupil_left = [area_pupil_left, (pi * radii_right^2)];
     end
-
-            
-    

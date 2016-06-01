@@ -79,8 +79,6 @@ global v_right;
 global h1;
 global h2;
 global attempt;
-global x_cord;
-global y_cord;
 global x_left;
 global x_right;
 global y_left;
@@ -127,10 +125,10 @@ existing_worksheet_data = 0;
 if (exist(strcat(date, '.xls'), 'file'))
     % if the excel sheet exists, then read it in
     [~, ~, existing_worksheet_data] = xlsread(strcat(date, '.xls'));
-    existing_worksheet_data = size(existing_worksheet_data, 1)
+    existing_worksheet_data = size(existing_worksheet_data, 1);
 end
 if (existing_worksheet_data == 0)  % i.e. no rows are filled
-    disp('empty')
+    disp('empty');
     xlswrite(strcat(date, '.xls'), [{'First Name'} {'Last Name'} {'Attempt'} {'Age'} {'Gender'} {'Notes'} {'MR Number'} {'OS'} {'OD'}], 'Sheet1', 'A1');
     existing_worksheet_data = existing_worksheet_data + 1;    % so that the next thing written will be after the present row
 end
@@ -151,7 +149,7 @@ end
 
 % write the excel file with the user's data
 patient_data = [{first_name} {last_name} attempt {age} gender(1) {rapd_notes} mr_no os od];
-strcat('A', num2str(existing_worksheet_data + 1))
+strcat('A', num2str(existing_worksheet_data + 1));
 xlswrite(strcat(date, '.xls'), patient_data, 'Sheet1', strcat('A', num2str(existing_worksheet_data + 1)));
 
 % -------------------------------------------------------------------------
@@ -160,20 +158,20 @@ xlswrite(strcat(date, '.xls'), patient_data, 'Sheet1', strcat('A', num2str(exist
 
 if strcmp(os,'OS: Normal')
         if ~strcmp(od,'OD: Normal')
-            GroundTruth = 2 % Right Diseased
+            GroundTruth = 2; % Right Diseased
             p = od;
             % Grade(1,2) = str2num(p(1,size(p,2)));
             % Grade(1,1) = 0;
             clear p
         else
-            GroundTruth = 1 % Normal
+            GroundTruth = 1; % Normal
             % Grade(1,1) = 0;
             % Grade(1,2) = 0;
         end
     end
     if strcmp(od,'OD: Normal')
         if ~strcmp(os,'OS: Normal')
-            GroundTruth = 3 % Left Diseased
+            GroundTruth = 3; % Left Diseased
             p = os;
             % Grade(1,1) = str2num(p(1,size(p,2)));
             % Grade(1,2) = 0;
@@ -181,8 +179,7 @@ if strcmp(os,'OS: Normal')
         end
     end
 
-
-% dlmwrite('./Final_XY_Vectors/Labels_Y.csv',GroundTruth,'-append');
+dlmwrite('./Final_XY_Vectors/Labels_Y.csv',GroundTruth,'-append');
 
 % -------------------------------------------------------------------------
 
@@ -215,10 +212,11 @@ area_pupil_left = [];
 time_left = [];
 time_right = [];
 
-% Set the update function for preview.. pass arguments
+% w1 = evalin('base','w1');
+% w2 = evalin('base','w2');
+
 setappdata(h1, 'UpdatePreviewWindowFcn', @(obj, evt, h1)process_videos_func_left(obj, evt, h1, v_left));
 setappdata(h2, 'UpdatePreviewWindowFcn', @(obj, evt, h2)process_videos_func_right(obj, evt, h2, v_right));
-
 
 function edit1_Callback(hObject, eventdata, handles)
 % hObject    handle to edit1 (see GCBO)

@@ -1,8 +1,12 @@
 clear all;
+close all;
+clc;
+
 % Show the preview of the cameras in a custom GUI
 % Also save the timestamps of both.
 % Also save the live video stream at the end
 % If this is possible, then the whole thing should happen this way
+
 global record;
 global stop;
 global arduino;
@@ -63,7 +67,6 @@ preview(w1, h2);
 preview(w2, h1);           % display the images as subplots
 
 start_button = uicontrol(f,'Style','pushbutton','String','START', 'Position',[50 20 60 40], 'Callback', {@do_record, '1'});
-% start_button = uicontrol(f,'Style','pushbutton','String','START', 'Position',[50 20 60 40], 'Callback', @gui_test);
 stop_button = uicontrol(f,'Style','pushbutton','String','STOP', 'Position',[450 20 60 40], 'Callback', {@stop_record, '1'});
 another_button = uicontrol(f,'Style','pushbutton','String','NEW PATIENT', 'Position',[230 20 100 40], 'Callback', @rapdi_gui);
 
