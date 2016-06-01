@@ -52,10 +52,10 @@ function area_of_pupil_left(event)
     D1 = Ir;
     [Ilabel, num] = bwlabel(D1);
 
-    % for cnt = 1:num
+    for cnt = 1:num
         s = regionprops(Ilabel, 'BoundingBox', 'Area', 'Centroid','MajorAxisLength','MinorAxisLength');
         % rectangle('position', s(cnt).BoundingBox,'EdgeColor','r','linewidth',2);
-    % end
+    end
     diameters = mean([s.MajorAxisLength s.MinorAxisLength],2);
     centers = s.Centroid;
 
