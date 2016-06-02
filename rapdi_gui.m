@@ -205,6 +205,9 @@ v_right.Quality = 100;
 
 waitfor(msgbox('Please align the Pupils correctly and then click on the centre of both the pupils.'));
 [x,y] = ginput(2);
+
+do_record(1,1,'1');
+
 assignin('base','x_cord',x)
 assignin('base','y_cord',y)
 
