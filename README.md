@@ -1,6 +1,8 @@
 ## PUPIL+ Machine Learning
 # Machine learning for automated classification of potential pupillary problems
 
+ This Branch includes the module which computes the areas of the pupils real time right when the test is being performed on a person. It makes the system better in a way that now none of the videos or timestamps need to be stored as the areas and timestamps are being calculated simultaneous to the capturing of the video and these newly computed areas on the new patient are being appended to the existing data.
+
  Given a video file of the reaction of the the right and left pupil to external light stimulus along with the timestamps of both the videos , plot the area of the right and left pupil at each instant of the given timestamps.
  
 * The main_file reads and processes all the videos one by one from a folder named Videos which contains all the Left,Right videos and timestamps.
