@@ -97,8 +97,10 @@ end
 
 % Configure vidObj1 properties.
 set(vidObj1, 'FramesPerTrigger', 1);
+% set(vidObj1, 'FramesAcquiredFcnCount', 1);
 
 % Configure vidObj1's video source properties.
 srcObj1 = get(vidObj1, 'Source');
+
 
 out = vidObj1 ;

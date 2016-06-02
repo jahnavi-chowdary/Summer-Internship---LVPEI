@@ -3,8 +3,7 @@ function stop_record(~, ~, val)
 % which is read by the process_videos_func callback function which is
 % called every time the preview window updates. THis will tell it to start
 % and stop the test.
-
-% display('STOP Record')
+display('STOP Record')
 global record;
 global arduino;
 global stop;
@@ -12,4 +11,9 @@ global stop;
 record = 0;
 stop = str2num(val);
 
-fprintf(arduino, 'x') ;
+% if (val == '0')
+   % Send signal to arduino
+%    fopen(arduino);
+   fprintf(arduino, 'x') ;
+%     fclose(arduino);
+% end

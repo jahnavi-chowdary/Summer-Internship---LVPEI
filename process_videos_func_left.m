@@ -11,12 +11,15 @@ function process_videos_func_left(obj, event, himage, videoObj)
     global area_pupil_left;
     global time_left;
     persistent flg;
+    global initial_blink_left;
     
     im = event.Data;
     
      if (record == 1 && stop == 0)
         
-        area_of_pupil_left(event);
+        subplot(1,2,1); 
+        hold on
+        area_of_pupil_left(event,himage);
         flg = 0;
         
     elseif (record == 0 && stop == 1)
@@ -25,13 +28,18 @@ function process_videos_func_left(obj, event, himage, videoObj)
         flg = flg +1;
         if flg == 1
             
+            if initial_blink_left == 1
+                area_pupil_left(1,1) = area_pupil_left(1,2);
+            end
+            
             dlmwrite('./Area_SOL_Time_CSV/RawAreas_Left.csv',area_pupil_left,'-append');
+            % aplsize = size(area_pupil_left)
         
             dlmwrite('./Area_SOL_Time_CSV/Size_Left.csv',size(area_pupil_left,2),'-append');
         
             time_left = time_left - time_left(1,1);
             dlmwrite('./Area_SOL_Time_CSV/Times_Left.csv',time_left,'-append');        
-            % tlsize = size(time_left)
+            tlsize = size(time_left)
         
             % Left Eye Area Vs Time
             ys = smooth(time_left,area_pupil_left,0.1,'rloess'); % This is used to smooth the curve for better visibility

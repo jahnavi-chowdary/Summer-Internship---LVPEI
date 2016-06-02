@@ -6,7 +6,6 @@ clc;
 % Also save the timestamps of both.
 % Also save the live video stream at the end
 % If this is possible, then the whole thing should happen this way
-
 global record;
 global stop;
 global arduino;
@@ -15,6 +14,8 @@ global v_right;
 global h1;
 global h2;
 global attempt;
+% global w1;
+% global w2;
 
 record = 2;     % A neutral value that it only takes at the start
 stop = 2;

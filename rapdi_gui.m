@@ -78,7 +78,11 @@ global v_left;
 global v_right;
 global h1;
 global h2;
+% global w1;
+% global w2;
 global attempt;
+global x_cord;
+global y_cord;
 global x_left;
 global x_right;
 global y_left;
@@ -87,6 +91,8 @@ global area_pupil_right;
 global area_pupil_left;
 global time_right;
 global time_left;
+global record;
+global stop;
 
 % hObject    handle to pushbutton1 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -179,6 +185,7 @@ if strcmp(os,'OS: Normal')
         end
     end
 
+
 dlmwrite('./Final_XY_Vectors/Labels_Y.csv',GroundTruth,'-append');
 
 % -------------------------------------------------------------------------
@@ -212,11 +219,11 @@ area_pupil_left = [];
 time_left = [];
 time_right = [];
 
-% w1 = evalin('base','w1');
-% w2 = evalin('base','w2');
-
 setappdata(h1, 'UpdatePreviewWindowFcn', @(obj, evt, h1)process_videos_func_left(obj, evt, h1, v_left));
 setappdata(h2, 'UpdatePreviewWindowFcn', @(obj, evt, h2)process_videos_func_right(obj, evt, h2, v_right));
+
+% setappdata(h1,'FramesAquiredFcn' , @(obj, evt, h1)process_videos_func_left(obj, evt, h1, v_left))
+% setappdata(h2,'FramesAquiredFcn' , @(obj, evt, h1)process_videos_func_left(obj, evt, h1, v_left))
 
 function edit1_Callback(hObject, eventdata, handles)
 % hObject    handle to edit1 (see GCBO)

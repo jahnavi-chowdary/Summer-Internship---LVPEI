@@ -1,12 +1,13 @@
 function area_of_pupil_right(event)
-    
     % display('Area_RIGHT');
     global x_right;
     global y_right;
     global area_pupil_right;
     global time_right; 
+    global initial_blink_right;
     
     I = event.Data;
+
     tstampstr = event.Timestamp;
     
     [hour_right, temp1] = strtok(tstampstr,':');
@@ -15,6 +16,7 @@ function area_of_pupil_right(event)
     
     time_rgt = ((3600 .* str2num(hour_right)) + (60 .* str2num(min_right)) + str2num(sec_right)) * 1000;
     time_right = [time_right , time_rgt];
+    
     
     % Getting area of Pupil
     I = rgb2gray(I);
@@ -51,21 +53,36 @@ function area_of_pupil_right(event)
 
     D1 = Ir;
     [Ilabel, num] = bwlabel(D1);
-
-    for cnt = 1:num
-        s = regionprops(Ilabel, 'BoundingBox', 'Area', 'Centroid','MajorAxisLength','MinorAxisLength');
-        % rectangle('position', s(cnt).BoundingBox,'EdgeColor','r','linewidth',2);
-    end
+   
+    if num == 0
+        
+        if ( size(area_pupil_right,2) == 0 )
+            initial_blink_right = 1;
+            area_pupil_right(1,1) = 0;
+        else
+            tmp = area_pupil_right(1,size(area_pupil_right,2));
+            area_pupil_right = [area_pupil_right, tmp];
+        end
     
-    diameters = mean([s.MajorAxisLength s.MinorAxisLength],2);
-    centers = s.Centroid;
-
-    if size(centers) == 0
-        tmp = area_pupil_right(1,size(area_pupil_right,2));
-        area_pupil_right = [area_pupil_right, tmp];
     else
-        x_right = centers(1,1);
-        y_right = centers(1,2);
-        radii_right = diameters/2;
-        area_pupil_right = [area_pupil_right, (pi * radii_right^2)];
+        
+        imshow(I);
+        for cnt = 1:num
+            s = regionprops(Ilabel, 'BoundingBox', 'Area', 'Centroid','MajorAxisLength','MinorAxisLength');
+            rectangle('position', s(cnt).BoundingBox,'EdgeColor','r','linewidth',1);
+        end
+        diameters = mean([s.MajorAxisLength s.MinorAxisLength],2);
+        centers = s.Centroid;
+
+        if size(centers) == 0
+            tmp = area_pupil_right(1,size(area_pupil_right,2));
+            area_pupil_right = [area_pupil_right, tmp];
+        else
+            x_right = centers(1,1);
+            y_right = centers(1,2);
+            radii_right = diameters/2;
+            area_pupil_right = [area_pupil_right, (pi * radii_right^2)];
+        end
     end
+            
+    

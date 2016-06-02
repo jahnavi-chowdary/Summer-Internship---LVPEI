@@ -11,6 +11,7 @@ function process_videos_func_right(obj, event, himage, videoObj)
     global area_pupil_right
     global time_right
     persistent flg;
+    global initial_blink_right;
     
     % TODO: save timestamps in a separate file
     % TODO: Save extracted pupil diameter with these timestamps
@@ -18,7 +19,9 @@ function process_videos_func_right(obj, event, himage, videoObj)
     % you get the image in this function from:
     im = event.Data;
     if (record == 1 && stop == 0)
-        
+
+        subplot(1,2,2)
+        hold on
         area_of_pupil_right(event);
         flg = 0;
         
@@ -29,13 +32,18 @@ function process_videos_func_right(obj, event, himage, videoObj)
         % terminate videoObj
         if flg == 1
             
+            if initial_blink_right == 1
+                area_pupil_right(1,1) = area_pupil_right(1,2);
+            end
+            
             dlmwrite('./Area_SOL_Time_CSV/RawAreas_Right.csv',area_pupil_right,'-append');
+            % aprsize = size(area_pupil_right)
         
             dlmwrite('./Area_SOL_Time_CSV/Size_Right.csv',size(area_pupil_right,2),'-append');
         
             time_right = time_right - time_right(1,1);
             dlmwrite('./Area_SOL_Time_CSV/Times_Right.csv',time_right,'-append');
-            % trsize = size(time_right)
+            trsize = size(time_right)
         
             % Right Eye Area Vs Time
             ys = smooth(time_right,area_pupil_right,0.1,'rloess'); % This is used to smooth the curve for better visibility
@@ -45,13 +53,13 @@ function process_videos_func_right(obj, event, himage, videoObj)
             clear area_pupil_right;
             clear time_right;
             delete(videoObj);
-                        
+            
         end
         
     else
         % display('There is a conflict between record and stop');
         % do nothing
-        var = 1; % just a dummy action
+        var = 1; % just a dummy action 
     end
 
     % you actively need to display the image in this function

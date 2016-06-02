@@ -3,13 +3,16 @@ function do_record(~, ~, val)
 % which is read by the process_videos_func callback function which is
 % called every time the preview window updates. THis will tell it to start
 % and stop the test.
-
-% display('DO Record')
+display('DO Record')
 global record;
 global arduino;
 global stop;
 
 stop = 0;
 record = str2num(val);
-  
-fprintf(arduino, 's');
+% if (val == '1')
+   % Send signal to arduino
+%    fopen(arduino);
+  fprintf(arduino, 's');
+%   fclose(arduino);
+% end
