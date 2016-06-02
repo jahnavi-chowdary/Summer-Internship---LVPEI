@@ -10,9 +10,5 @@ global stop;
 
 stop = 0;
 record = str2num(val);
-% if (val == '1')
-   % Send signal to arduino
-%    fopen(arduino);
-  fprintf(arduino, 's');
-%   fclose(arduino);
-% end
+
+fprintf(arduino, 's');
