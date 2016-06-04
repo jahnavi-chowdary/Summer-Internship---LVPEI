@@ -149,7 +149,7 @@ switch choice
         clear time_right;
         
         % Here need to update the training module
-%         feature_vector = GetNormalized_Interpolated_Areas_FV_X(0,0,0);
+%         feature_vector = GetNormalized_Interpolated_Areas(0,0,0);
 %         
 %         if (exist('./Final_XY_Vectors/FeatureVector_X.csv','file') == 2)
 %             delete('./Final_XY_Vectors/FeatureVector_X.csv');
@@ -248,16 +248,16 @@ switch choice
         
         
         % Use the existing theta values and get the predicted value.
-        feature_vector = GetNormalized_Interpolated_Areas_FV_X(0,0,0);
-        
-        if (exist('./Final_XY_Vectors/FeatureVector_X.csv','file') == 2)
-            delete('./Final_XY_Vectors/FeatureVector_X.csv');
-        end
-        dlmwrite('./Final_XY_Vectors/FeatureVector_X.csv',feature_vector);
-        
-        display('Feature Vector calculation completed');
-        all_X = csvread('./Final_XY_Vectors/FeatureVector_X.csv');
-        test_X = all_X(size(all_X,1),:);
+%        feature_vector = GetNormalized_Interpolated_Areas(0,0,0);
+%        
+%        if (exist('./Final_XY_Vectors/FeatureVector_X.csv','file') == 2)
+%            delete('./Final_XY_Vectors/FeatureVector_X.csv');
+%        end
+%        dlmwrite('./Final_XY_Vectors/FeatureVector_X.csv',feature_vector);
+%        
+%        display('Feature Vector calculation completed');
+%        all_X = csvread('./Final_XY_Vectors/FeatureVector_X.csv');
+%        test_X = all_X(size(all_X,1),:);
         % predicted_label = Test_Data(test_X);
         % display(predicted_label);
         
