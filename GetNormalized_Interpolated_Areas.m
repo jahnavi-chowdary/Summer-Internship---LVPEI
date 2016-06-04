@@ -1,4 +1,4 @@
-function feature_vector = GetNormalized_Interpolated_Areas_FV_X(save_all_csv,view_all_plots,save_all_plots)
+function feature_vector = GetNormalized_Interpolated_Areas(save_all_csv,view_all_plots,save_all_plots)
 
 % This function reads the areas,state of light,times from the mat file  
 % 'All_Areas_SOL_Times.mat', computes the normalized interpolated areas and
