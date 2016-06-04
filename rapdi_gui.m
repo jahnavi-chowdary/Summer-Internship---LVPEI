@@ -78,21 +78,7 @@ global v_left;
 global v_right;
 global h1;
 global h2;
-% global w1;
-% global w2;
 global attempt;
-global x_cord;
-global y_cord;
-global x_left;
-global x_right;
-global y_left;
-global y_right;
-global area_pupil_right;
-global area_pupil_left;
-global time_right;
-global time_left;
-global record;
-global stop;
 
 % hObject    handle to pushbutton1 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -134,7 +120,7 @@ if (exist(strcat(date, '.xls'), 'file'))
     existing_worksheet_data = size(existing_worksheet_data, 1);
 end
 if (existing_worksheet_data == 0)  % i.e. no rows are filled
-    disp('empty');
+    % disp('empty');
     xlswrite(strcat(date, '.xls'), [{'First Name'} {'Last Name'} {'Attempt'} {'Age'} {'Gender'} {'Notes'} {'MR Number'} {'OS'} {'OD'}], 'Sheet1', 'A1');
     existing_worksheet_data = existing_worksheet_data + 1;    % so that the next thing written will be after the present row
 end
@@ -185,8 +171,18 @@ if strcmp(os,'OS: Normal')
         end
     end
 
-
-dlmwrite('./Final_XY_Vectors/Labels_Y.csv',GroundTruth,'-append');
+    try
+        p = csvread('./Final_XY_Vectors/Labels_Y.csv');
+        vary = 1;
+    catch err
+         dlmwrite('./Final_XY_Vectors/Labels_Y.csv',GroundTruth);
+         vary = 0;
+    end
+    clear p;
+    if vary == 1
+       dlmwrite('./Final_XY_Vectors/Labels_Y.csv',GroundTruth,'-append');
+       clear var;
+    end
 
 % -------------------------------------------------------------------------
 
@@ -194,39 +190,17 @@ dlmwrite('./Final_XY_Vectors/Labels_Y.csv',GroundTruth,'-append');
 video_filename = strcat(mr_no,'_',num2str(attempt),'_left.avi');
 close(v_left);
 v_left = VideoWriter(video_filename);
-v_left.FrameRate = 30;
+v_left.FrameRate = 10;
 v_left.Quality = 100;
 
 video_filename = strcat(mr_no,'_',num2str(attempt) ,'_right.avi');
 close(v_right);
 v_right = VideoWriter(video_filename);
-v_right.FrameRate = 30;
+v_right.FrameRate = 10;
 v_right.Quality = 100;
-
-waitfor(msgbox('Please align the Pupils correctly and then click on the centre of both the pupils.'));
-[x,y] = ginput(2);
-
-do_record(1,1,'1');
-
-assignin('base','x_cord',x)
-assignin('base','y_cord',y)
-
-x_left = y(1,1);
-x_right = y(2,1);
-
-y_left = x(1,1);
-y_right = x(2,1);
-
-area_pupil_right = [];
-area_pupil_left = [];
-time_left = [];
-time_right = [];
 
 setappdata(h1, 'UpdatePreviewWindowFcn', @(obj, evt, h1)process_videos_func_left(obj, evt, h1, v_left));
 setappdata(h2, 'UpdatePreviewWindowFcn', @(obj, evt, h2)process_videos_func_right(obj, evt, h2, v_right));
-
-% setappdata(h1,'FramesAquiredFcn' , @(obj, evt, h1)process_videos_func_left(obj, evt, h1, v_left))
-% setappdata(h2,'FramesAquiredFcn' , @(obj, evt, h1)process_videos_func_left(obj, evt, h1, v_left))
 
 function edit1_Callback(hObject, eventdata, handles)
 % hObject    handle to edit1 (see GCBO)

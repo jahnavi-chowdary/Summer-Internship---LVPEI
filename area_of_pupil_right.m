@@ -1,88 +1,86 @@
-function area_of_pupil_right(event)
-    % display('Area_RIGHT');
+function area_of_pupil_right(im_right)
+    display('Enterend Area_of_Right')
     global x_right;
     global y_right;
     global area_pupil_right;
-    global time_right; 
+    global time_right;
     global initial_blink_right;
     
-    I = event.Data;
-
-    tstampstr = event.Timestamp;
-    
-    [hour_right, temp1] = strtok(tstampstr,':');
-    [min_right, temp2] = strtok(temp1,':');
-    [sec_right] = strtok(temp2,':');
-    
-    time_rgt = ((3600 .* str2num(hour_right)) + (60 .* str2num(min_right)) + str2num(sec_right)) * 1000;
-    time_right = [time_right , time_rgt];
-    
+    len = size(im_right,2); 
+    area_pupil_right = [];
     
     % Getting area of Pupil
-    I = rgb2gray(I);
-    I_2 = zeros(size(I));
-    [hei_I, wid_I] = size(I);
-
-    rI = floor(x_right); cI = floor(y_right);
-    winSize1 = 100;
-    winSize2 = 100; 
-    rl = max(1,rI - winSize1);
-    cl = max(1,cI - winSize2);
-    I_1 = I(cl:min(hei_I,(cl+2*winSize2)),rl:min(wid_I,(rl+2*winSize1)));
-    
-    clear I_new;
-    I_new = zeros(size(I_1));
-    I_new(I_1<70) = 1;
-    I_2(cl:min(hei_I,(cl+2*winSize2)),rl:min(wid_I,(rl+2*winSize1))) = I_new;
-    I_new = I_2;
-    
-    SE = strel('disk', 2);
-    I_ne = imcomplement(I_new);
-    I_dil = imdilate(I_ne,SE);
-    I_temp = imcomplement(I_dil);
-    I_fill = imfill(I_temp,'holes');
-
-    BW = I_fill;
+    figure;
+    for i = 1:len
         
-    BW1 = BW;
-    CC = bwconncomp(BW);
-    numPixels = cellfun(@numel,CC.PixelIdxList);
-    [biggest,idx] = max(numPixels);
-    BW(CC.PixelIdxList{idx}) = 0;
-    Ir = imsubtract(BW1,BW);
+        I = im_right{1,i}; 
 
-    D1 = Ir;
-    [Ilabel, num] = bwlabel(D1);
+        % imshow(I)
+        [hei_I, wid_I ,dim_I] = size(I);
+
+        rI = floor(x_right); cI = floor(y_right);
+        winSize1 = 100;
+        winSize2 = 100; 
+        rl = max(1,rI - winSize1);
+        cl = max(1,cI - winSize2);
+        I_1 = I(cl:min(hei_I,(cl+2*winSize2)),rl:min(wid_I,(rl+2*winSize1)),:);
+    
+        I_1 = rgb2gray(I_1);
+        I_2 = zeros(size(hei_I , wid_I));
+
+        clear I_new;
+        I_new = zeros(size(I_1));
+        I_new(I_1<70) = 1;
+    
+        SE = strel('disk', 2);
+        
+        I_2(cl:min(hei_I,(cl+2*winSize2)),rl:min(wid_I,(rl+2*winSize1))) = imfill(imcomplement(imdilate(imcomplement(I_new),SE)),'holes');
+        BW = I_2;
+        
+        CC = bwconncomp(BW);
+        numPixels = cellfun(@numel,CC.PixelIdxList);
+        [biggest,idx] = max(numPixels);
+        BW(CC.PixelIdxList{idx}) = 0;
+        D1 = imsubtract(I_2,BW);
+
+        [Ilabel, num] = bwlabel(D1);
    
-    if num == 0
+        if num == 0
         
-        if ( size(area_pupil_right,2) == 0 )
-            initial_blink_right = 1;
-            area_pupil_right(1,1) = 0;
-        else
-            tmp = area_pupil_right(1,size(area_pupil_right,2));
-            area_pupil_right = [area_pupil_right, tmp];
-        end
+            if ( size(area_pupil_right,2) == 0 )
+                initial_blink_right = 1;
+                area_pupil_right(1,1) = 0;
+            else
+                tmp = area_pupil_right(1,size(area_pupil_right,2));
+                area_pupil_right = [area_pupil_right, tmp];
+            end
     
-    else
-        
-        imshow(I);
-        for cnt = 1:num
-            s = regionprops(Ilabel, 'BoundingBox', 'Area', 'Centroid','MajorAxisLength','MinorAxisLength');
-            rectangle('position', s(cnt).BoundingBox,'EdgeColor','r','linewidth',1);
-        end
-        diameters = mean([s.MajorAxisLength s.MinorAxisLength],2);
-        centers = s.Centroid;
-
-        if size(centers) == 0
-            tmp = area_pupil_right(1,size(area_pupil_right,2));
-            area_pupil_right = [area_pupil_right, tmp];
         else
-            x_right = centers(1,1);
-            y_right = centers(1,2);
-            radii_right = diameters/2;
-            area_pupil_right = [area_pupil_right, (pi * radii_right^2)];
+        
+            % imshow(I);
+            for cnt = 1:num
+                s = regionprops(Ilabel, 'BoundingBox', 'Area', 'Centroid','MajorAxisLength','MinorAxisLength');
+                % rectangle('position', s(cnt).BoundingBox,'EdgeColor','r','linewidth',1);
+            end
+            diameters = mean([s.MajorAxisLength s.MinorAxisLength],2);
+            centers = s.Centroid;
+
+            if size(centers) == 0
+                tmp = area_pupil_right(1,size(area_pupil_right,2));
+                area_pupil_right = [area_pupil_right, tmp];
+            else
+                x_right = centers(1,1);
+                y_right = centers(1,2);
+                radii_right = diameters/2;
+                area_pupil_right = [area_pupil_right, (pi * radii_right^2)];
+            end
         end
     end
-            
+    assignin('base','area_pupil_right',area_pupil_right);
+      
+    if initial_blink_right == 1
+        area_pupil_right(1,1) = area_pupil_right(1,2);
+    end
+    display('Area_Right Completed')
+end
     

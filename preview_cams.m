@@ -14,8 +14,6 @@ global v_right;
 global h1;
 global h2;
 global attempt;
-% global w1;
-% global w2;
 
 record = 2;     % A neutral value that it only takes at the start
 stop = 2;

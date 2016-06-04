@@ -33,8 +33,11 @@ lambda = 0.1;
 num_labels = 3;
 [all_theta] = oneVsAll(train_X, train_Y, num_labels, lambda);
 
+if (exist('./LogR_Theta.csv','file') == 2)
+    delete('./LogR_Theta.csv');
+end
+
 dlmwrite('./LogR_Theta.csv',all_theta);
-% save('LogR_Theta.mat',all_theta);
 
 % Prediction
 
