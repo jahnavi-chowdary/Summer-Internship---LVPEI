@@ -1,5 +1,5 @@
 function area_of_pupil_left(im_left)
-    display('Entered area_pupil_left')
+    display('Calculating Area_of_LeftPupil...')
     global x_left;
     global y_left;
     global area_pupil_left;
@@ -15,10 +15,13 @@ function area_of_pupil_left(im_left)
         
         I = im_left{1,i}; 
        
-        % imshow(I);
+        imshow(I);
+        hold on
         [hei_I, wid_I , dim_I] = size(I);
     
         rI = floor(x_left); cI = floor(y_left);
+        plot(x_left,y_left,'*');
+        
         winSize1 = 100;
         winSize2 = 100; 
         rl = max(1,rI - winSize1);
@@ -56,11 +59,10 @@ function area_of_pupil_left(im_left)
                 area_pupil_left = [area_pupil_left, tmp];
             end
         else
-    
-            % imshow(I);
             for cnt = 1:num
                 s = regionprops(Ilabel, 'BoundingBox', 'Area', 'Centroid','MajorAxisLength','MinorAxisLength');
-                % rectangle('position', s(cnt).BoundingBox,'EdgeColor','b','linewidth',1);
+                rectangle('position', s(cnt).BoundingBox,'EdgeColor','b','linewidth',1);
+                pause(0.0001)
             end
             diameters = mean([s.MajorAxisLength s.MinorAxisLength],2);
             centers = s.Centroid;
@@ -81,5 +83,6 @@ function area_of_pupil_left(im_left)
     if initial_blink_left == 1
         area_pupil_left(1,1) = area_pupil_left(1,2);
     end
-    display('Area_left completed');
+    
+    display('Area_of_LeftPupil Computation Completed!!!');
 end

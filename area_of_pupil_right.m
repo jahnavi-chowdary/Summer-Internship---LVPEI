@@ -1,5 +1,5 @@
 function area_of_pupil_right(im_right)
-    display('Enterend Area_of_Right')
+    display('Calculating Area_of_RightPupil...')
     global x_right;
     global y_right;
     global area_pupil_right;
@@ -10,15 +10,17 @@ function area_of_pupil_right(im_right)
     area_pupil_right = [];
     
     % Getting area of Pupil
-    figure;
     for i = 1:len
         
         I = im_right{1,i}; 
 
-        % imshow(I)
+        imshow(I);
+        hold on
         [hei_I, wid_I ,dim_I] = size(I);
 
         rI = floor(x_right); cI = floor(y_right);
+        plot(x_right,y_right,'*');
+        
         winSize1 = 100;
         winSize2 = 100; 
         rl = max(1,rI - winSize1);
@@ -57,10 +59,10 @@ function area_of_pupil_right(im_right)
     
         else
         
-            % imshow(I);
             for cnt = 1:num
                 s = regionprops(Ilabel, 'BoundingBox', 'Area', 'Centroid','MajorAxisLength','MinorAxisLength');
-                % rectangle('position', s(cnt).BoundingBox,'EdgeColor','r','linewidth',1);
+                rectangle('position', s(cnt).BoundingBox,'EdgeColor','r','linewidth',1);
+                pause(0.0001)
             end
             diameters = mean([s.MajorAxisLength s.MinorAxisLength],2);
             centers = s.Centroid;
@@ -81,6 +83,7 @@ function area_of_pupil_right(im_right)
     if initial_blink_right == 1
         area_pupil_right(1,1) = area_pupil_right(1,2);
     end
-    display('Area_Right Completed')
+    
+    display('Area_of_RightPupil Computation Completed!!!')
 end
     

@@ -12,13 +12,14 @@ function process_videos_func_left(obj, event, himage, videoObj)
     persistent flg;
     global initial_blink_left;
     global im_left
+    global tstampstr_left;
     
     im = event.Data;
     
     if (record == 1 && stop == 0)
      
+        tstampstr_left{1,(size(tstampstr_left,2)+1)} = event.Timestamp;
         tstampstr = event.Timestamp;
-    
         [hour_left, temp1] = strtok(tstampstr,':');
         [min_left, temp2] = strtok(temp1,':');
         [sec_left] = strtok(temp2,':');

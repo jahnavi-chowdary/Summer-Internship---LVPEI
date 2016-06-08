@@ -1,4 +1,4 @@
-function feature_vector = GetNormalized_Interpolated_Areas_FV_X(save_all_csv,view_all_plots,save_all_plots)
+function feature_vector = GetNormalized_Interpolated_Areas(save_all_csv,view_all_plots,save_all_plots)
 
 % This function reads the areas,state of light,times from the mat file  
 % 'All_Areas_SOL_Times.mat', computes the normalized interpolated areas and
@@ -16,18 +16,11 @@ if save_all_plots == 1
     mkdir ('./','ScatterPlots_Final');
 end
 
-% mkdir ('./','Final_XY_Vectors'); % To store the final feature vectors and labels in a specified place.
-
-% load('All_Areas_SOL_Times.mat')
-
-% dir_seg = dir('./CSV/*.csv'); % Change 'Normal' to 'Abnormal'
-% len = length(dir_seg);
-
 len = size(csvread('./Area_SOL_Time_CSV/RawAreas_Right.csv'),1);
 sizes_right = csvread('./Area_SOL_Time_CSV/Size_Right.csv');
 sizes_left = csvread('./Area_SOL_Time_CSV/Size_Left.csv');
 
-all_min = 100000000000;
+all_min = 10000000000000;
 all_max = 0;
 
 % Note : If a standard min and max area is being used then this whole function is not required 
@@ -39,13 +32,15 @@ for i = 1 : len
     l = csvread('./Area_SOL_Time_CSV/RawAreas_Left.csv',i-1,0,[i-1 0 i-1 (sizes_left(i,1)-1)]);
     r = csvread('./Area_SOL_Time_CSV/RawAreas_Right.csv',i-1,0,[i-1 0 i-1 (sizes_right(i,1)-1)]);
         
-    m = max(length(l), length(r));
+    m = min(length(l), length(r));
         
     % Insert zeros if the the lengths are different
     if length(l) ~= m
-        l(length(l)+1:m) = 0;
+        l = l(1,1:m);
+        % l(length(l)+1:m) = 0;
     elseif length(r) ~= m
-        r(length(r)+1:m) = 0;
+        r = r(1,1:m);
+        % r(length(r)+1:m) = 0;
     end
         
     areas = [l r];
@@ -78,16 +73,18 @@ for i = 1 : len
     l_time = csvread('./Area_SOL_Time_CSV/Times_Left.csv',i-1,0,[i-1 0 i-1 (sizes_left(i,1)-1)]);
     r_time = csvread('./Area_SOL_Time_CSV/Times_Right.csv',i-1,0,[i-1 0 i-1 (sizes_right(i,1)-1)]);
          
-    xql = 0:57:max(l_time);
-    xqr = 0:57:max(r_time);
-    m = max(length(xql), length(xqr));
+    xql = 0:20:max(l_time);
+    xqr = 0:20:max(r_time);
+    m = min(length(xql), length(xqr));
         
     % If the lengths don't match, insert zeros
         
     if length(xql) ~= m
-       xql(length(xql)+1:m) = 0;
+       xql = xql(1,1:m);
+        % xql(length(xql)+1:m) = 0;
     elseif length(xqr) ~= m
-       xqr(length(xqr)+1:m) = 0;
+       xqr = xqr(1,1:m);
+        % xqr(length(xqr)+1:m) = 0;
     end
         
     % Interpolation
@@ -95,21 +92,8 @@ for i = 1 : len
     vq2l = interp1(l_time',l_area',xql,'spline');
     vq2r = interp1(r_time',r_area',xqr,'spline');
         
-    feature_vector(i,:) = [vq2l(1,1:450) vq2r(1,1:450)];
+    feature_vector(i,:) = [vq2l(1,1:750) vq2r(1,1:750)];
     
-%      try
-%          p = csvread('./Final_XY_Vectors/FeatureVector_X.csv');
-%          vary = 1;
-%      catch err
-%          dlmwrite('./Final_XY_Vectors/FeatureVector_X.csv',feature_vector);
-%          vary = 0;
-%      end
-%      clear p;
-%      if vary == 1
-%         dlmwrite('./Final_XY_Vectors/FeatureVector_X.csv',feature_vector,'-append');
-%         clear vary;
-%      end
-%      clear feature_vector;
      
     % ---------------------------- Additional Requirements ------------------------------------ %
     

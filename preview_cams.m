@@ -65,6 +65,9 @@ subplot(1,2,2); h2 = subimage(hImage2);
 preview(w1, h2); 
 preview(w2, h1);           % display the images as subplots
 
+mkdir('./Area_SOL_Time_CSV');
+mkdir('./Final_XY_Vectors');
+
 start_button = uicontrol(f,'Style','pushbutton','String','START', 'Position',[50 20 60 40], 'Callback', {@do_record, '1'});
 stop_button = uicontrol(f,'Style','pushbutton','String','STOP', 'Position',[450 20 60 40], 'Callback', {@stop_record, '1'});
 another_button = uicontrol(f,'Style','pushbutton','String','NEW PATIENT', 'Position',[230 20 100 40], 'Callback', @rapdi_gui);

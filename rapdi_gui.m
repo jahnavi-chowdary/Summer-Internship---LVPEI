@@ -139,6 +139,8 @@ for i = 1:length(All_IDs)
     end
 end
 
+assignin('base', 'attempt', attempt);
+
 % write the excel file with the user's data
 patient_data = [{first_name} {last_name} attempt {age} gender(1) {rapd_notes} mr_no os od];
 strcat('A', num2str(existing_worksheet_data + 1));
@@ -148,7 +150,7 @@ xlswrite(strcat(date, '.xls'), patient_data, 'Sheet1', strcat('A', num2str(exist
 
 % Getting the label of the patient
 
-if strcmp(os,'OS: Normal')
+    if strcmp(os,'OS: Normal')
         if ~strcmp(od,'OD: Normal')
             GroundTruth = 2; % Right Diseased
             p = od;
@@ -170,33 +172,21 @@ if strcmp(os,'OS: Normal')
             clear p;
         end
     end
-
-    try
-        p = csvread('./Final_XY_Vectors/Labels_Y.csv');
-        vary = 1;
-    catch err
-         dlmwrite('./Final_XY_Vectors/Labels_Y.csv',GroundTruth);
-         vary = 0;
-    end
-    clear p;
-    if vary == 1
-       dlmwrite('./Final_XY_Vectors/Labels_Y.csv',GroundTruth,'-append');
-       clear var;
-    end
+    assignin('base','GroundTruth',GroundTruth);
 
 % -------------------------------------------------------------------------
 
 %% Create the video object
 video_filename = strcat(mr_no,'_',num2str(attempt),'_left.avi');
-close(v_left);
+%close(v_left);
 v_left = VideoWriter(video_filename);
-v_left.FrameRate = 10;
+v_left.FrameRate = 30;
 v_left.Quality = 100;
 
 video_filename = strcat(mr_no,'_',num2str(attempt) ,'_right.avi');
-close(v_right);
+%close(v_right);
 v_right = VideoWriter(video_filename);
-v_right.FrameRate = 10;
+v_right.FrameRate = 30;
 v_right.Quality = 100;
 
 setappdata(h1, 'UpdatePreviewWindowFcn', @(obj, evt, h1)process_videos_func_left(obj, evt, h1, v_left));

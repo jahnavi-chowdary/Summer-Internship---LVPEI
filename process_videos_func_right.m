@@ -12,6 +12,7 @@ function process_videos_func_right(obj, event, himage, videoObj)
     persistent flg;
     global initial_blink_right;
     global im_right;
+    global tstampstr_right;
     
     % TODO: save timestamps in a separate file
     % TODO: Save extracted pupil diameter with these timestamps
@@ -21,8 +22,8 @@ function process_videos_func_right(obj, event, himage, videoObj)
     
     if (record == 1 && stop == 0)
         
+        tstampstr_right{1,(size(tstampstr_right,2)+1)} = event.Timestamp;
         tstampstr = event.Timestamp;
-    
         [hour_right, temp1] = strtok(tstampstr,':');
         [min_right, temp2] = strtok(temp1,':');
         [sec_right] = strtok(temp2,':');
