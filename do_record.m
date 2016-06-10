@@ -17,9 +17,13 @@ global arduino;
 global stop;
 global im_left;
 global im_right;
+global tstampstr_left;
+global tstampstr_right;
 
 im_left = [];
 im_right = [];
+tstampstr_left = [];
+tstampstr_right = [];
 
 waitfor(msgbox('Please align the Pupils correctly and then click on the centre of both the pupils.'));
 [x,y] = ginput(2);

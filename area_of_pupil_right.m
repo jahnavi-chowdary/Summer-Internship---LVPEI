@@ -1,25 +1,38 @@
-function area_of_pupil_right(im_right)
+function area_of_pupil_right(im_rgt)
     display('Calculating Area_of_RightPupil...')
     global x_right;
     global y_right;
     global area_pupil_right;
-    global time_right;
     global initial_blink_right;
+    global im_right;
+    global time_right;
+    global tstampstr_right;
+
+    len = size(im_rgt,2); 
+    actual_len_right = len
+    sampling_rate_right = ceil(len/350)
+%     var = [1:len];
+%     var = downsample(var,new_len);
+%     im_lft = im_lft(var); 
+    im_rgt = downsample(im_rgt,sampling_rate_right);
+    im_right = im_rgt;
+    time_right = downsample(time_right,sampling_rate_right);
+    tstampstr_right = downsample(tstampstr_right,sampling_rate_right);
     
-    len = size(im_right,2); 
     area_pupil_right = [];
     
+    len = size(im_rgt,2);
     % Getting area of Pupil
     for i = 1:len
         
-        I = im_right{1,i}; 
+        I = im_rgt{1,i}; 
 
-        imshow(I);
-        hold on
+        % imshow(I);
+        % hold on
         [hei_I, wid_I ,dim_I] = size(I);
 
         rI = floor(x_right); cI = floor(y_right);
-        plot(x_right,y_right,'*');
+        % plot(x_right,y_right,'*');
         
         winSize1 = 100;
         winSize2 = 100; 
@@ -61,8 +74,8 @@ function area_of_pupil_right(im_right)
         
             for cnt = 1:num
                 s = regionprops(Ilabel, 'BoundingBox', 'Area', 'Centroid','MajorAxisLength','MinorAxisLength');
-                rectangle('position', s(cnt).BoundingBox,'EdgeColor','r','linewidth',1);
-                pause(0.0001)
+                % rectangle('position', s(cnt).BoundingBox,'EdgeColor','r','linewidth',1);
+                % pause(0.0001)
             end
             diameters = mean([s.MajorAxisLength s.MinorAxisLength],2);
             centers = s.Centroid;

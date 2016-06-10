@@ -97,6 +97,14 @@ end
 
 % Configure vidObj1 properties.
 set(vidObj1, 'FramesPerTrigger', 1);
+
+% set(vidObj1,'FrameGrabInterval',10);
+% [frames, time] = getdata(vidObj1,get(vidObj1,'FramesAvailable'));
+% framerate = mean(1./diff(time))
+% capturetime = 600
+% interval = get(vidObj1,'FrameGrabInterval')
+% numframes = floor(capturetime * framerate / interval)
+
 % set(vidObj1, 'FramesAcquiredFcnCount', 1);
 
 % Configure vidObj1's video source properties.
