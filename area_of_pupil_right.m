@@ -1,4 +1,4 @@
-function area_of_pupil_right(im_rgt)
+function area_of_pupil_right_new(im_rgt)
     display('Calculating Area_of_RightPupil...')
     global x_right;
     global y_right;
@@ -9,8 +9,8 @@ function area_of_pupil_right(im_rgt)
     global tstampstr_right;
 
     len = size(im_rgt,2); 
-    actual_len_right = len
-    sampling_rate_right = ceil(len/350)
+    actual_len_right = len;
+    sampling_rate_right = ceil(len/350);
 %     var = [1:len];
 %     var = downsample(var,new_len);
 %     im_lft = im_lft(var); 
@@ -30,16 +30,19 @@ function area_of_pupil_right(im_rgt)
         % imshow(I);
         % hold on
         [hei_I, wid_I ,dim_I] = size(I);
-
-        rI = floor(x_right); cI = floor(y_right);
-        % plot(x_right,y_right,'*');
+        if i == 1
+            I_1 = I;
+        else
+            rI = floor(x_right); cI = floor(y_right);
+            % plot(x_right,y_right,'*');
+            
+            winSize1 = 100;
+            winSize2 = 100;
+            rl = max(1,rI - winSize1);
+            cl = max(1,cI - winSize2);
+            I_1 = I(cl:min(hei_I,(cl+2*winSize2)),rl:min(wid_I,(rl+2*winSize1)),:);
+        end
         
-        winSize1 = 100;
-        winSize2 = 100; 
-        rl = max(1,rI - winSize1);
-        cl = max(1,cI - winSize2);
-        I_1 = I(cl:min(hei_I,(cl+2*winSize2)),rl:min(wid_I,(rl+2*winSize1)),:);
-    
         I_1 = rgb2gray(I_1);
         I_2 = zeros(size(hei_I , wid_I));
 

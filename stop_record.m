@@ -15,6 +15,7 @@ global im_left;
 global im_right;
 global tstampstr_left;
 global tstampstr_right;
+global bestEpsilon;
 
 record = 0;
 stop = str2num(val);
@@ -57,16 +58,20 @@ ys = smooth(time_left,area_pupil_left,0.1,'rloess'); % This is used to smooth th
 figure ;
 plot(time_left,ys,'b')
 hold on
-
 ys = smooth(time_right,area_pupil_right,0.1,'rloess'); % This is used to smooth the curve for better visibility
 plot(time_right,ys,'r')
+legend('OS','OD')
+hold on
+
 toc;
 
 pause(8)
-            
+ 
+bestEpsilon = 4.389450424379703e-20;
+
 % Now what to do with the obtained new data
             
-choice = questdlg('Would you like to use this data for Retraining the System ?','Action on Data' , 'Yes' , 'No, VALIDATE this data instead' , 'No , DISCARD this data' , 'Yes');
+choice = questdlg('Would you like to use this data for Retraining the System ?','Action on Data' , 'Yes' , 'No, TEST this data instead' , 'No , DISCARD this data' , 'Yes');
             
 switch choice
     case 'Yes'                
@@ -87,39 +92,42 @@ switch choice
         l_time = time_left;
         r_time = time_right;
          
-        xql = 0:57:max(l_time);
-        xqr = 0:57:max(r_time);
+        xql = 0:110:max(l_time);
+        xqr = 0:110:max(r_time);
         m = min(length(xql), length(xqr));
         
         % If the lengths don't match, insert zeros
         
         if length(xql) ~= m
             xql = xql(1,1:m);
-            % xql(length(xql)+1:m) = 0;
         elseif length(xqr) ~= m
             xqr = xqr(1,1:m);
-            % xqr(length(xqr)+1:m) = 0;
         end
         
         % Interpolation
         
-        vq2l = interp1(l_time',l_area',xql,'spline');
-        vq2r = interp1(r_time',r_area',xqr,'spline');
+        vq2l = interp1(l_time',l_area',xql,'linear');
+        vq2r = interp1(r_time',r_area',xqr,'linear');
         
-        feature_vector = [vq2l(1,1:450) vq2r(1,1:450)];
+        Get3SetsOfAreas(xql,xqr,vq2l,vq2r);
         
-        % feature_vector = Get_Interpolated_Areas(0,0,0);
+        feature_vector_450 = [vq2l(1,1:225) vq2r(1,1:225)];
+      
+        dlmwrite('./Final_XY_Vectors/FeatureVector_X_450.csv',feature_vector_450,'-append');
         
-        % if (exist('./Final_XY_Vectors/FeatureVector_X.csv','file') == 2)
-        %     delete('./Final_XY_Vectors/FeatureVector_X.csv');
-        % end
-        dlmwrite('./Final_XY_Vectors/FeatureVector_X.csv',feature_vector,'-append');
+        feature_vector_14 = GetThetas();
         
         display('Feature Vector calculation completed');
         
         GroundTruth = evalin('base','GroundTruth');
         dlmwrite('./Final_XY_Vectors/Labels_Y.csv',GroundTruth,'-append');
         display('Label saved')
+        
+        % Get the train set and test set size
+        
+        AnomalyDetection();
+        
+        % GetReportData(xql,xqr,vq2l,vq2r);
         
         % Saving the Videos
         getvideo(im_left,im_right,tstampstr_left,tstampstr_right);
@@ -133,19 +141,27 @@ switch choice
         attempt = evalin('base','attempt');
     
         fname_plot = strcat(mr_no,'_',num2str(attempt),'_plot','.jpg');
-        % fname_plot = strcat(ID,'_',Attempt,'_','plot','.jpg');
         imwrite(plot_area,fullfile('./Plots',fname_plot));
         display('Plot Saved!!!')
         
-        % TO DO : Get the train set and test set size
-        % trainset_size = ?
-        % testset_size = ?
-        accuracies = 1;
-        data_split = 1;
-        CM = 1;
-        % LogisticRegression(trainset_size,testset_size,accuracies,data_split,CM)
+        existing_worksheet_data = evalin('base','existing_worksheet_data');
         
-    case 'No, VALIDATE this data instead'
+        first_name = evalin('base', 'first_name');
+        last_name = evalin('base', 'last_name');
+        age = evalin('base', 'age');
+        gender = evalin('base', 'gender');
+        rapd_notes = evalin('base', 'rapd_notes');
+        mr_no = evalin('base', 'mr_no');
+        os = evalin('base', 'os');
+        od = evalin('base', 'od');
+        
+        patient_data = [{first_name} {last_name} attempt {age} gender(1) {rapd_notes} mr_no os od];
+        strcat('A', num2str(existing_worksheet_data + 1));
+        xlswrite(strcat(date, '.xls'), patient_data, 'Sheet1', strcat('A', num2str(existing_worksheet_data + 1)));
+        display('CURRENT DATA COLLECTION COMPLETED!!!')
+        
+        
+    case 'No, TEST this data instead'
         
         dlmwrite('./Area_SOL_Time_CSV/RawAreas_Left.csv',area_pupil_left,'-append');
         dlmwrite('./Area_SOL_Time_CSV/Size_Left.csv',size(area_pupil_left,2),'-append');
@@ -162,31 +178,29 @@ switch choice
         l_time = time_left;
         r_time = time_right;
          
-        xql = 0:57:max(l_time);
-        xqr = 0:57:max(r_time);
+        xql = 0:110:max(l_time);
+        xqr = 0:110:max(r_time);
         m = min(length(xql), length(xqr));
         
         % If the lengths don't match, insert zeros
         if length(xql) ~= m
             xql = xql(1,1:m);
-            % xql(length(xql)+1:m) = 0;
         elseif length(xqr) ~= m
             xqr = xqr(1,1:m);
-            % xqr(length(xqr)+1:m) = 0;
         end
         
         % Interpolation
-        vq2l = interp1(l_time',l_area',xql,'spline');
-        vq2r = interp1(r_time',r_area',xqr,'spline');
         
-        feature_vector = [vq2l(1,1:450) vq2r(1,1:450)];
+        vq2l = interp1(l_time',l_area',xql,'linear');
+        vq2r = interp1(r_time',r_area',xqr,'linear');
         
-        % feature_vector = Get_Interpolated_Areas(0,0,0);
+        Get3SetsOfAreas(xql,xqr,vq2l,vq2r);
         
-        % if (exist('./Final_XY_Vectors/FeatureVector_X.csv','file') == 2)
-        %     delete('./Final_XY_Vectors/FeatureVector_X.csv');
-        % end
-        dlmwrite('./Final_XY_Vectors/FeatureVector_X.csv',feature_vector,'-append');
+        feature_vector_450 = [vq2l(1,1:225) vq2r(1,1:225)];
+      
+        dlmwrite('./Final_XY_Vectors/FeatureVector_X_450.csv',feature_vector_450,'-append');
+        
+        feature_vector_14 = GetThetas();
         
         display('Feature Vector calculation completed');
         
@@ -194,9 +208,17 @@ switch choice
         dlmwrite('./Final_XY_Vectors/Labels_Y.csv',GroundTruth,'-append');
         display('Label saved')
         
-        test_X = feature_vector;
-        predicted_label = Test_Data(test_X)
-        % display(predicted_label);
+        % Test and give a predicted result
+        test_X = feature_vector_14;
+        Predicted_Label = Test_Data(test_X);
+%         if Predicted_Label == 0
+%             legend(strcat('Label : ',sprintf('%d', Predicted_Label),'- Abnormal'),'Location','SouthEast');
+%         else
+%             legend(strcat('Label : ',sprintf('%d', Predicted_Label),'- Abnormal'),'Location','SouthEast');
+%         end
+%         hold off
+                
+        % GetReportData(xql,xqr,vq2l,vq2r);
         
         % Saving the Videos
         getvideo(im_left,im_right,tstampstr_left,tstampstr_right);
@@ -211,14 +233,60 @@ switch choice
         attempt = evalin('base','attempt');
     
         fname_plot = strcat(mr_no,'_',num2str(attempt),'_plot','.jpg');
-        % fname_plot = strcat(ID,'_',Attempt,'_','plot','.jpg');
         imwrite(plot_area,fullfile('./Plots',fname_plot));
         display('Plot Saved!!!')
         
-    case 'No , DISCARD this data'
-        % Delete the label from the Labels_Y.csv
+        existing_worksheet_data = evalin('base','existing_worksheet_data');
         
-%         row = size(csvread('./Final_XY_Vectors/Labels_Y.csv'),1);
-%         dlmwrite('./Final_XY_Vectors/Labels_Y.csv',[dlmread('./Final_XY_Vectors/Labels_Y.csv',',',[0 0 row-2 0]);[]],',');
+        first_name = evalin('base', 'first_name');
+        last_name = evalin('base', 'last_name');
+        age = evalin('base', 'age');
+        gender = evalin('base', 'gender');
+        rapd_notes = evalin('base', 'rapd_notes');
+        mr_no = evalin('base', 'mr_no');
+        os = evalin('base', 'os');
+        od = evalin('base', 'od');
+        
+        patient_data = [{first_name} {last_name} attempt {age} gender(1) {rapd_notes} mr_no os od];
+        strcat('A', num2str(existing_worksheet_data + 1));
+        xlswrite(strcat(date, '.xls'), patient_data, 'Sheet1', strcat('A', num2str(existing_worksheet_data + 1)));
+        display('CURRENT DATA COLLECTION COMPLETED!!!')
+        
+    case 'No , DISCARD this data'
+        
+        %legend(strcat('Label : ','NA','- Data Discarded'),'Location','SouthEast');
+        
+        % Saving the Videos
+        getvideo(im_left,im_right,tstampstr_left,tstampstr_right);
+        if ~exist('./Plots','dir')
+            mkdir('./Plots');
+        end
+        F = getframe(gcf);
+        Image = F.cdata;
+        plot_area = Image;
+        mr_no = evalin('base','mr_no');
+        attempt = evalin('base','attempt');
+    
+        fname_plot = strcat(mr_no,'_',num2str(attempt),'_plot','.jpg');
+        imwrite(plot_area,fullfile('./Plots',fname_plot));
+        display('Plot Saved!!!')
+        
+        existing_worksheet_data = evalin('base','existing_worksheet_data');
+        
+        first_name = evalin('base', 'first_name');
+        last_name = evalin('base', 'last_name');
+        age = evalin('base', 'age');
+        gender = evalin('base', 'gender');
+        rapd_notes = evalin('base', 'rapd_notes');
+        mr_no = evalin('base', 'mr_no');
+        os = evalin('base', 'os');
+        od = evalin('base', 'od');
+        
+        patient_data = [{first_name} {last_name} attempt {age} gender(1) {rapd_notes} mr_no os od];
+        strcat('A', num2str(existing_worksheet_data + 1));
+        xlswrite(strcat(date, '.xls'), patient_data, 'Sheet1', strcat('A', num2str(existing_worksheet_data + 1)));
+        display('CURRENT DATA COLLECTION COMPLETED!!!')
+        
+        
         display('Current Test Discarded');
 end

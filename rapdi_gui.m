@@ -113,6 +113,7 @@ close;
 %% Prepare the XLS file
 % Write patient details to a file, name the file
 % First we read it and see how many rows are written...
+
 existing_worksheet_data = 0;
 if (exist(strcat(date, '.xls'), 'file'))
     % if the excel sheet exists, then read it in
@@ -124,6 +125,8 @@ if (existing_worksheet_data == 0)  % i.e. no rows are filled
     xlswrite(strcat(date, '.xls'), [{'First Name'} {'Last Name'} {'Attempt'} {'Age'} {'Gender'} {'Notes'} {'MR Number'} {'OS'} {'OD'}], 'Sheet1', 'A1');
     existing_worksheet_data = existing_worksheet_data + 1;    % so that the next thing written will be after the present row
 end
+
+assignin('base','existing_worksheet_data',existing_worksheet_data);
 
 attempt = 0;
 [num,txt,raw] = xlsread(strcat(date, '.xls'));
@@ -141,10 +144,10 @@ end
 
 assignin('base', 'attempt', attempt);
 
-% write the excel file with the user's data
-patient_data = [{first_name} {last_name} attempt {age} gender(1) {rapd_notes} mr_no os od];
-strcat('A', num2str(existing_worksheet_data + 1));
-xlswrite(strcat(date, '.xls'), patient_data, 'Sheet1', strcat('A', num2str(existing_worksheet_data + 1)));
+% % write the excel file with the user's data
+% patient_data = [{first_name} {last_name} attempt {age} gender(1) {rapd_notes} mr_no os od];
+% strcat('A', num2str(existing_worksheet_data + 1));
+% xlswrite(strcat(date, '.xls'), patient_data, 'Sheet1', strcat('A', num2str(existing_worksheet_data + 1)));
 
 % -------------------------------------------------------------------------
 

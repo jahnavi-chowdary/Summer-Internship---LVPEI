@@ -1,6 +1,18 @@
-function predicted_labels_test =  Test_Data(test_X)
+function Predicted_Label =  Test_Data(test_X)
 
-all_theta = csvread('./LogR_Theta.csv');
+global bestEpsilon
 
-predicted_labels_test = predictOneVsAll(all_theta, test_X);
-display(predicted_labels_test);
+mu = csvread('./Training_Module_CSV/mu.csv');
+sigma2 = csvread('./Training_Module_CSV/sigma2.csv');
+
+p = bsxfun(@times,(2*pi*sigma2).^(-1/2),exp(-bsxfun(@rdivide,(bsxfun(@minus,test_X,mu)).^2,2*sigma2)));
+p = prod(p,2);
+
+if p < bestEpsilon
+    Predicted_Label = 0
+    display('Unfortunately ABMORMAL :(');
+else
+    Predicted_Label = 1
+    display('Yayyy NORMAL :)')
+end
+
