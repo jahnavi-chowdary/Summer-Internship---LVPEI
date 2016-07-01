@@ -32,6 +32,18 @@ function area_of_pupil_right_new(im_rgt)
         [hei_I, wid_I ,dim_I] = size(I);
         if i == 1
             I_1 = I;
+            
+            I_1 = rgb2gray(I_1);
+            I_2 = zeros(size(hei_I , wid_I));
+            
+            clear I_new;
+            I_new = zeros(size(I_1));
+            I_new(I_1<70) = 1;
+            
+            SE = strel('disk', 2);
+            
+            I_2 = imfill(imcomplement(imdilate(imcomplement(I_new),SE)),'holes');
+            
         else
             rI = floor(x_right); cI = floor(y_right);
             % plot(x_right,y_right,'*');
@@ -41,18 +53,21 @@ function area_of_pupil_right_new(im_rgt)
             rl = max(1,rI - winSize1);
             cl = max(1,cI - winSize2);
             I_1 = I(cl:min(hei_I,(cl+2*winSize2)),rl:min(wid_I,(rl+2*winSize1)),:);
+            
+            I_1 = rgb2gray(I_1);
+            I_2 = zeros(size(hei_I , wid_I));
+            
+            clear I_new;
+            I_new = zeros(size(I_1));
+            I_new(I_1<70) = 1;
+            
+            SE = strel('disk', 2);
+            
+            I_2(cl:min(hei_I,(cl+2*winSize2)),rl:min(wid_I,(rl+2*winSize1))) = imfill(imcomplement(imdilate(imcomplement(I_new),SE)),'holes');
+            
         end
         
-        I_1 = rgb2gray(I_1);
-        I_2 = zeros(size(hei_I , wid_I));
-
-        clear I_new;
-        I_new = zeros(size(I_1));
-        I_new(I_1<70) = 1;
-    
-        SE = strel('disk', 2);
         
-        I_2(cl:min(hei_I,(cl+2*winSize2)),rl:min(wid_I,(rl+2*winSize1))) = imfill(imcomplement(imdilate(imcomplement(I_new),SE)),'holes');
         BW = I_2;
         
         CC = bwconncomp(BW);
